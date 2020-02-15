@@ -66,7 +66,7 @@ func TestPeekRead()  {
 	r := bufio.NewReaderSize(s, 16)
 	b, err := r.Peek(3)
 	if err != nil {
-		fmt.Println(err)
+	 	fmt.Println(err)
 	}
 	fmt.Printf("%q\n", b)
 	b, err = r.Peek(17)
@@ -82,9 +82,23 @@ func TestPeekRead()  {
 	}
 }
 
+func TestRead()  {
+	s := strings.NewReader(strings.Repeat("a", 16) + strings.Repeat("b", 16))
+	r := bufio.NewReaderSize(s, 16)
+	b, _ := r.Peek(3)
+	fmt.Printf("%q\n", b)
+	r.Read(make([]byte, 16))
+	r.Read(make([]byte, 15))
+	// b共用bufio底层的buffer,
+	// 第一次Read会将string的前16个字符a读到bufio底层buffer中, 此时打印b会显示aaa
+	// 第二次Read会将string的后16个字符b读到bufio底层的buffer中, 此时打印b会显示bbb
+	fmt.Printf("%q\n", b)
+}
+
 func main() {
 	// TestWriteBufio()
 	// TestBatchWrite()
 	// TestResetWrite()
-	TestPeekRead()
+	// TestPeekRead()
+	TestRead()
 }
