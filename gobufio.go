@@ -3,6 +3,8 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"strings"
 )
 
@@ -95,10 +97,53 @@ func TestRead()  {
 	fmt.Printf("%q\n", b)
 }
 
+type R struct {
+	n int
+}
+
+func (r *R) Read(b []byte) (n int, err error) {
+	// fmt.Println("Read")
+	// copy(b, "abcdefghijklmnop")
+	// return 16, nil
+	fmt.Printf("read#: %d\n", r.n)
+	if r.n >= 10 {
+		return 0, io.EOF
+	}
+	copy(b, "abcd")
+	r.n += 1
+	return 4, nil
+}
+
+func TestDiscardRead()  {
+	r := new(R)
+	br := bufio.NewReaderSize(r, 16)
+	buf := make([]byte, 4)
+	// 第一次Read会将调用io.Read读入16个字符到bufio底层buffer中,
+	// 然后从bufio底层buffer取出4个字符, bufio底层buffer还剩12个字符未取出
+	br.Read(buf)
+	fmt.Printf("%q\n", buf)
+	// 要丢弃13个字符超过bufio底层buffer的12个字符, 剩余要丢弃的1个字符, 触发第2次调用io.Read
+	br.Discard(13)
+	br.Read(buf)
+	fmt.Printf("%q\n", buf)
+}
+
+func TestWriteTo()  {
+	br := bufio.NewReaderSize(new(R), 16)
+	// 这个功能要再研究一下...
+	n, err := br.WriteTo(ioutil.Discard)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("writen bytes:%d\n", n)
+}
+
 func main() {
 	// TestWriteBufio()
 	// TestBatchWrite()
 	// TestResetWrite()
 	// TestPeekRead()
-	TestRead()
+	// TestRead()
+	// TestDiscardRead()
+	TestWriteTo()
 }
