@@ -5,7 +5,7 @@ syntax = "proto3";
 
 option go_package = "";
 
-package pb;
+package proto;
 
 service Observe {
     rpc SayRoute(RouteReq) returns (RouteResp) {}
