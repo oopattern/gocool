@@ -1,8 +1,4 @@
 FROM golang:alpine
-# FROM golang:latest
-# FROM ccr.ccs.tencentyun.com/sngapmpub/centos-golang
-# FROM csighub.tencentyun.com/trpc-go/trpc-go-dev:latest
-# FROM mirrors.tencent.com/tlinux/tlinux2.2-minimal
 
 # Set necessary environmet variables needed for our image
 ENV GO111MODULE=on \
@@ -22,16 +18,16 @@ RUN go mod download
 COPY main.go .
 
 # Build the application
-RUN go build -o stringtest .
+RUN go build -o gocool .
 
 # Move to /dist directory as the place for resulting binary folder
 WORKDIR /dist
 
 # Copy binary from build to main folder
-RUN cp /build/stringtest .
+RUN cp /build/gocool .
 
 # Export necessary port
-EXPOSE 8005
+# EXPOSE 7777
 
 # Command to run when starting the container
-CMD ["/dist/stringtest"]
+CMD ["/dist/gocool"]
