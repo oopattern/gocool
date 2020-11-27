@@ -1,8 +1,15 @@
 # -- Traditional deployment -- #
-killall gocool
-go build -o gocool
-nohup ./gocool &
-ps aux | grep gocool | grep -v grep
+cd server
+killall gocool-server
+go build -o gocool-server
+nohup ./gocool-server &
+ps aux | grep gocool-server | grep -v grep
+
+cd client
+killall gocool-client
+go build -o gocool-client
+nohup ./gocool-client &
+ps aux | grep gocool-client | grep -v grep
 
 # -- Docker deployment -- #
 # docker build . -t dock-gocool --network=bridge

@@ -6,7 +6,7 @@ import (
 	"context"
 	"net"
 	"google.golang.org/grpc"
-	"gocool/proto"
+	"github.com/oopattern/gocool/proto"
 )
 
 type routeServer struct {
