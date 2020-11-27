@@ -28,7 +28,6 @@ func (r *routeServer) SayRoute(ctx context.Context, req *proto.RouteReq) (*proto
 
 func main() {
 	fmt.Println("hello world")
-
 	lis, err := net.Listen("tcp", fmt.Sprintf("%s:%d", RouteHost, RoutePort))
 	if err != nil {
 		log.Fatalf("failed to listen: +%v", err)
@@ -38,14 +37,4 @@ func main() {
 	grpcServer := grpc.NewServer(opts...)
 	proto.RegisterObserveServer(grpcServer, &r)
 	log.Fatal(grpcServer.Serve(lis))
-
-	/*
-	r := routeServer{}
-	req := proto.RouteReq{
-		Name: "RouteName",
-	}
-	resp, err := r.SayRoute(context.Background(), &req)
-	if err == nil {
-		fmt.Printf("ip[%s] port[%s]\n", resp.GetIp(), resp.GetPort())
-	}*/
 }
