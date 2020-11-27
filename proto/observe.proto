@@ -1,0 +1,21 @@
+// prepare: https://grpc.io/docs/languages/go/quickstart/
+// generate code: # protoc --go_out=. --go-grpc_out=. ./observe.proto
+
+syntax = "proto3";
+
+option go_package = "";
+
+package pb;
+
+service Observe {
+    rpc SayRoute(RouteReq) returns (RouteResp) {}
+}
+
+message RouteReq {
+    string name = 1;
+}
+
+message RouteResp {
+    string ip = 1;
+    string port = 2;
+}
