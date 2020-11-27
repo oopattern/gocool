@@ -1,15 +1,18 @@
 # -- Traditional deployment -- #
-cd server
+cd /data/sakulali/go_workspace/src/gocool/server
+killall gocool-server
 killall gocool-server
 go build -o gocool-server
 nohup ./gocool-server &
 ps aux | grep gocool-server | grep -v grep
 
-cd client
+sleep 1
+
+cd /data/sakulali/go_workspace/src/gocool/client
 killall gocool-client
 go build -o gocool-client
-nohup ./gocool-client &
 ps aux | grep gocool-client | grep -v grep
+./gocool-client
 
 # -- Docker deployment -- #
 # docker build . -t dock-gocool --network=bridge

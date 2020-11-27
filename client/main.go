@@ -14,9 +14,9 @@ var (
 )
 
 func main() {
-	fmt.Print("client connect to server")
 	addr := fmt.Sprintf("%s:%d", RouteHost, RoutePort)
 	var opts []grpc.DialOption
+	opts = append(opts, grpc.WithInsecure())
 	conn, err := grpc.Dial(addr, opts...)
 	if err != nil {
 		log.Fatalf("failed to dial: %v", err)
@@ -28,6 +28,6 @@ func main() {
 	}
 	resp, err := client.SayRoute(context.Background(), &req)
 	if nil == err {
-		fmt.Printf("client get resp ip[%s] port ok\n", resp.GetIp(), resp.GetPort())
+		fmt.Printf("client get resp ip[%s] port[%s] ok\n", resp.GetIp(), resp.GetPort())
 	}
 }
