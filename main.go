@@ -10,7 +10,7 @@ import (
 )
 
 type routeServer struct {
-	// proto.mustEmbedUnimplementedObserveServer
+	proto.UnimplementedObserveServer
 }
 
 var (
@@ -18,7 +18,6 @@ var (
 	RoutePort = 7777
 )
 
-// rpc SayRoute(RouteReq) returns (RouteResp) {}
 func (r *routeServer) SayRoute(ctx context.Context, req *proto.RouteReq) (*proto.RouteResp, error) {
 	fmt.Println(req.GetName())
 	return &proto.RouteResp{
@@ -29,6 +28,7 @@ func (r *routeServer) SayRoute(ctx context.Context, req *proto.RouteReq) (*proto
 
 func main() {
 	fmt.Println("hello world")
+
 	lis, err := net.Listen("tcp", fmt.Sprintf("%s:%d", RouteHost, RoutePort))
 	if err != nil {
 		log.Fatalf("failed to listen: +%v", err)
@@ -40,6 +40,7 @@ func main() {
 	log.Fatal(grpcServer.Serve(lis))
 
 	/*
+	r := routeServer{}
 	req := proto.RouteReq{
 		Name: "RouteName",
 	}
