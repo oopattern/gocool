@@ -7,15 +7,15 @@ import (
 	"github.com/oopattern/gocool/proto"
 )
 
-type routeServer struct {
+type RouteServer struct {
 	proto.UnimplementedObserveServer
 }
 
-func (r *routeServer)RegisterServer(grpcServer *grpc.Server) {
+func (r *RouteServer)RegisterServer(grpcServer *grpc.Server) {
 	proto.RegisterObserveServer(grpcServer, r)
 }
 
-func (r *routeServer) SayRoute(ctx context.Context, req *proto.RouteReq) (*proto.RouteResp, error) {
+func (r *RouteServer) SayRoute(ctx context.Context, req *proto.RouteReq) (*proto.RouteResp, error) {
 	fmt.Println(req.GetName())
 	return &proto.RouteResp{
 		Ip:   "localhost",
