@@ -11,7 +11,7 @@ var (
 
 func TestBuildGrpcServer(t *testing.T) {
 	fmt.Println("hello gRpc")
-	route := routeServer{}
+	route := RouteServer{}
 	s := NewServer(endpoint)
 	s.RegisterService(route.RegisterServer)
 	s.Run()
