@@ -3,7 +3,7 @@
 
 syntax = "proto3";
 
-// option go_package = "github.com/oopattern/gocool";
+// option go_package = "github.com/oopattern/gocool/proto";
 
 package proto;
 

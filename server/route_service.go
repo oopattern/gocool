@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"fmt"
@@ -18,7 +18,7 @@ func (r *routeServer)RegisterServer(grpcServer *grpc.Server) {
 func (r *routeServer) SayRoute(ctx context.Context, req *proto.RouteReq) (*proto.RouteResp, error) {
 	fmt.Println(req.GetName())
 	return &proto.RouteResp{
-		Ip:   RouteHost,
-		Port: fmt.Sprintf("%d", RoutePort),
+		Ip:   "localhost",
+		Port: fmt.Sprintf("%d", 7777),
 	}, nil
 }
