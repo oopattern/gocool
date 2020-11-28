@@ -1,5 +1,6 @@
 // prepare: https://grpc.io/docs/languages/go/quickstart/
 // generate code: # protoc --go_out=. --go-grpc_out=. ./observe.proto
+// go test: # go test -v -run="TestBuildGrpcServer"
 
 syntax = "proto3";
 
