@@ -5,7 +5,14 @@ package server
 // ref: https://www.liwenzhou.com/posts/Go/zap/
 // ref: https://prometheus.io/
 // ref: https://programmaticponderings.com/tag/prometheus/
+// ref: https://programmaticponderings.com/tag/jaeger/
 // ref: https://medium.com/htc-research-engineering-blog/build-a-monitoring-dashboard-by-prometheus-grafana-741a7d949ec2
+// ref: https://jishuin.proginn.com/p/763bfbd310b3
+// ref: https://medium.com/opentracing/tracing-http-request-latency-in-go-with-opentracing-7cc1282a100a
+// ref: https://www.selinux.tech/golang/grpc/grpc-tracing
+// ref: https://github.com/bigbully/Dapper-translation
+// ref: https://juejin.cn/post/6871928187123826702
+// ref: https://blog.csdn.net/zhounixing/article/details/105815910
 import (
 	"fmt"
 	"log"
@@ -16,7 +23,8 @@ import (
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
-	// grpc_opentracing "github.com/grpc-ecosystem/go-grpc-middleware/tracing/opentracing"
+	// jaeger "github.com/uber/jaeger-client-go"
+	// opentracing "github.com/opentracing/opentracing-go"
 )
 
 var (
@@ -42,7 +50,6 @@ func (s *grpcServer) Run() {
 }
 
 func NewServer(endpoint string) GrpcServer {
-	// traceCfg := grpc_opentracing.UnaryServerInterceptor()
 	logCfg := grpc_zap.UnaryServerInterceptor(ZapLogger)
 	prometheusCfg := grpc_prometheus.UnaryServerInterceptor
 	unaryOpt := grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(prometheusCfg, logCfg))
