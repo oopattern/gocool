@@ -16,6 +16,8 @@ package server
 // ref: https://skyapm.github.io/document-cn-translation-of-skywalking/zh/8.0.0/
 // ref: https://learn.hashicorp.com/tutorials/consul/get-started-service-discovery
 // ref: http://blog.didispace.com/consul-service-discovery-exp/
+// ref: https://juejin.cn/post/6844903794380111886
+// ref: https://github.com/generals-space/gokit
 import (
 	"fmt"
 	"log"
@@ -45,7 +47,12 @@ type grpcServer struct {
 }
 
 func (s *grpcServer) RegisterService(reg func(*grpc.Server)) {
+	// register to gRpc
 	reg(s.server)
+	// register to consul
+	for sname, info := range s.server.GetServiceInfo() {
+		ZapLogger.Info(fmt.Sprintf("register service_name[%s], info[%+v]", sname, info))
+	}
 }
 
 func (s *grpcServer) Run() {

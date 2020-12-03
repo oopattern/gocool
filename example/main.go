@@ -9,8 +9,6 @@ import (
 var errStop = errors.New("just quit...")
 
 func main() {
-	fmt.Println("process start")
-
 	var (
 		errc = make(chan error, 1)
 		resc = make(chan int, 1)
@@ -18,20 +16,24 @@ func main() {
 	)
 
 	go func() {
-		time.Sleep(time.Second)
-		fmt.Println("catch stop signal")
 		errc <- errStop
+		fmt.Printf("1. errc: %d\n", len(errc))
+		time.Sleep(2*time.Second)
 	}()
+
+	// time.Sleep(1*time.Second)
 
 	select {
 	case err := <-errc:
-		fmt.Printf("catch err[%v]", err)
+		time.Sleep(1*time.Second)
+		fmt.Printf("x catch err[%v]\n", err.Error())
 	case res := <-resc:
-		fmt.Printf("catch resc signal[%v]", res)
+		fmt.Printf("x catch resc signal[%v]\n", res)
 	case c := <-interruptc:
-		fmt.Printf("catch interrupt signal[%v]", c)
+		fmt.Printf("x catch interrupt signal[%v]\n", c)
+	//default:
+	//	time.Sleep(5*time.Second)
+	//	fmt.Printf("x just do nothing...%d\n", len(errc))
 	}
-
-	fmt.Println("process finish")
 }
 
