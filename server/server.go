@@ -13,6 +13,9 @@ package server
 // ref: https://github.com/bigbully/Dapper-translation
 // ref: https://juejin.cn/post/6871928187123826702
 // ref: https://blog.csdn.net/zhounixing/article/details/105815910
+// ref: https://skyapm.github.io/document-cn-translation-of-skywalking/zh/8.0.0/
+// ref: https://learn.hashicorp.com/tutorials/consul/get-started-service-discovery
+// ref: http://blog.didispace.com/consul-service-discovery-exp/
 import (
 	"fmt"
 	"log"
