@@ -4,9 +4,11 @@ go 1.15
 
 require (
 	github.com/SkyAPM/go2sky v0.6.0
+	github.com/go-kit/kit v0.10.0
 	github.com/google/go-cmp v0.5.2 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
+	github.com/hashicorp/consul/api v1.3.0
 	github.com/kr/text v0.2.0 // indirect
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/oopattern/gocool v0.0.0-20201128102623-6d29e7602796

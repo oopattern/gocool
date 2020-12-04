@@ -39,11 +39,16 @@ var (
 type GrpcServer interface {
 	Run()
 	RegisterService(reg func(*grpc.Server))
+	GetListener() net.Listener
 }
 
 type grpcServer struct {
 	server *grpc.Server
 	listener net.Listener
+}
+
+func (s *grpcServer) GetListener() net.Listener {
+	return s.listener
 }
 
 func (s *grpcServer) RegisterService(reg func(*grpc.Server)) {
@@ -53,6 +58,8 @@ func (s *grpcServer) RegisterService(reg func(*grpc.Server)) {
 	for sname, info := range s.server.GetServiceInfo() {
 		ZapLogger.Info(fmt.Sprintf("register service_name[%s], info[%+v]", sname, info))
 	}
+	// print addr
+	ZapLogger.Info(fmt.Sprintf("listen endpoint[%s]", s.listener.Addr().String()))
 }
 
 func (s *grpcServer) Run() {
