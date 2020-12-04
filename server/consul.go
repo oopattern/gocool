@@ -9,13 +9,19 @@ import (
 	kitsd "github.com/go-kit/kit/sd/consul"
 	kitep "github.com/go-kit/kit/endpoint"
 	consul "github.com/hashicorp/consul/api"
+	"strconv"
+	"strings"
 )
 
 var (
+	// # nohup consul agent -dev -client=0.0.0.0 &
 	consulAddr = "localhost:8500"
 )
 
 func RegisterConsul(service string, endpoint string) error {
+	addr := strings.Split(endpoint, ":")
+	port, _ := strconv.Atoi(addr[1])
+
 	client, err := consul.NewClient(&consul.Config{Address:consulAddr})
 	if err != nil {
 		ZapLogger.Error("create consul client error")
@@ -28,8 +34,8 @@ func RegisterConsul(service string, endpoint string) error {
 		ID:                "Kit-Consul",
 		Name:              service,
 		Tags:              []string{"alpha"},
-		Port:              0,
-		Address:           "",
+		Port:              port,
+		Address:           addr[0],
 		EnableTagOverride: false,
 	}
 	factory := func(instance string) (kitep.Endpoint, io.Closer, error) {

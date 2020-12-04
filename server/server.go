@@ -18,6 +18,8 @@ package server
 // ref: http://blog.didispace.com/consul-service-discovery-exp/
 // ref: https://juejin.cn/post/6844903794380111886
 // ref: https://github.com/generals-space/gokit
+// ref: https://stackoverflow.com/questions/30684262/different-ports-used-by-consul
+// ref: https://www.consul.io/docs/install/ports
 import (
 	"fmt"
 	"log"
@@ -55,11 +57,14 @@ func (s *grpcServer) RegisterService(reg func(*grpc.Server)) {
 	// register to gRpc
 	reg(s.server)
 	// register to consul
-	for sname, info := range s.server.GetServiceInfo() {
-		ZapLogger.Info(fmt.Sprintf("register service_name[%s], info[%+v]", sname, info))
+	endpoint := s.listener.Addr().String()
+	for name, info := range s.server.GetServiceInfo() {
+		if err := RegisterConsul(name, endpoint); err != nil {
+			log.Fatalf("Failed to register service[%s]", name)
+		}
+		ZapLogger.Info(fmt.Sprintf("register service_name[%s], info[%+v]", name, info))
 	}
-	// print addr
-	ZapLogger.Info(fmt.Sprintf("listen endpoint[%s]", s.listener.Addr().String()))
+	ZapLogger.Info(fmt.Sprintf("listen endpoint[%s]", endpoint))
 }
 
 func (s *grpcServer) Run() {
