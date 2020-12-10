@@ -20,6 +20,10 @@ package server
 // ref: https://github.com/generals-space/gokit
 // ref: https://stackoverflow.com/questions/30684262/different-ports-used-by-consul
 // ref: https://www.consul.io/docs/install/ports
+// ref: https://www.cnblogs.com/FireworksEasyCool/p/12782137.html
+// ref: https://medium.com/swlh/rest-over-grpc-with-grpc-gateway-for-go-9584bfcbb835
+// ref: https://jergoo.gitbooks.io/go-grpc-practice-guide/content/chapter3/gateway.html
+// ref: https://github.com/jergoo/go-grpc-tutorial/tree/master/src/proto/google/api
 import (
 	"fmt"
 	"log"

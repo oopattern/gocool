@@ -10,11 +10,11 @@ import (
 
 var (
 	// skywalking backend port
-	TracePort = 11800
+	tracePort = 11800
 )
 
 func init() {
-	endpoint := fmt.Sprintf("127.0.0.1:%d", TracePort)
+	endpoint := fmt.Sprintf("127.0.0.1:%d", tracePort)
 	r, err := reporter.NewGRPCReporter(endpoint)
 	if err != nil {
 		log.Fatalf("failed new trace reporter err: %v", err)
