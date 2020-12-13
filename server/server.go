@@ -26,14 +26,14 @@ package server
 // ref: https://github.com/jergoo/go-grpc-tutorial/tree/master/src/proto/google/api
 import (
 	"fmt"
-	"log"
-	"net"
-	"net/http"
-	"google.golang.org/grpc"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"google.golang.org/grpc"
+	"log"
+	"net"
+	"net/http"
 	// jaeger "github.com/uber/jaeger-client-go"
 	// opentracing "github.com/opentracing/opentracing-go"
 )
@@ -50,6 +50,7 @@ type GrpcServer interface {
 
 type grpcServer struct {
 	server *grpc.Server
+	http *http.Server
 	listener net.Listener
 }
 
@@ -73,6 +74,8 @@ func (s *grpcServer) RegisterService(reg func(*grpc.Server)) {
 
 func (s *grpcServer) Run() {
 	log.Fatal(s.server.Serve(s.listener))
+	// support REST gateway
+	// log.Fatal(s.http.Serve(s.listener))
 }
 
 func NewServer(endpoint string) GrpcServer {
@@ -83,17 +86,20 @@ func NewServer(endpoint string) GrpcServer {
 	var opts []grpc.ServerOption
 	opts = append(opts, unaryOpt)
 	s := grpc.NewServer(opts...)
-	grpc_prometheus.Register(s)
-	grpc_prometheus.EnableHandlingTimeHistogram()
 
 	// Create a HTTP server for prometheus
-	httpServer := &http.Server{Addr: fmt.Sprintf("0.0.0.0:%d", MetricsHttpPort)}
+	grpc_prometheus.Register(s)
+	grpc_prometheus.EnableHandlingTimeHistogram()
+	prometheusServer := &http.Server{Addr: fmt.Sprintf("0.0.0.0:%d", MetricsHttpPort)}
 	http.Handle("/metrics", promhttp.Handler())
 	go func() {
-		if err := httpServer.ListenAndServe(); err != nil {
+		if err := prometheusServer.ListenAndServe(); err != nil {
 			log.Fatal("Failed to start a http server")
 		}
 	}()
+
+	// Create REST gateway
+	h := RouteHttp(endpoint, s)
 
 	// Create a TCP  server
 	l, err := net.Listen("tcp", endpoint)
@@ -103,6 +109,7 @@ func NewServer(endpoint string) GrpcServer {
 
 	server := &grpcServer{
 		server: s,
+		http: h,
 		listener: l,
 	}
 	return server

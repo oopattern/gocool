@@ -14,7 +14,6 @@ type RouteServer struct {
 
 func (r *RouteServer)RegisterServer(grpcServer *grpc.Server) {
 	proto.RegisterObserveServer(grpcServer, r)
-	proto.RegisterObserveHandlerServer()
 }
 
 func (r *RouteServer) SayRoute(ctx context.Context, req *proto.RouteReq) (*proto.RouteResp, error) {
@@ -27,6 +26,7 @@ func (r *RouteServer) SayRoute(ctx context.Context, req *proto.RouteReq) (*proto
 		}
 		port = addr[1]
 	}
+	ZapLogger.Debug("rpc call ok")
 	return &proto.RouteResp{
 		Ip:   ip,
 		Port: port,
