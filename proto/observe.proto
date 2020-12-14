@@ -14,7 +14,7 @@ option go_package = ".;proto";
 
 import "google/api/annotations.proto";
 
-// curl -X POST -H 'Content-Type: application/json' "http://localhost:7777/v1/observe" -d '{"foo": "bar"}'
+// curl -X POST -H 'Content-Type: application/json' "http://localhost:8006/v1/observe" -d '{"name": "bar"}' -vvv
 service Observe {
     rpc SayRoute(RouteReq) returns (RouteResp) {
         option(google.api.http) = {

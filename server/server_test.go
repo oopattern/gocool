@@ -7,7 +7,7 @@ import (
 
 var (
 	route = RouteServer{}
-	endpoint = fmt.Sprintf("%s:%d", "localhost", 7777)
+	endpoint = fmt.Sprintf("localhost:%d",7777)
 )
 
 func TestBuildGrpcServer(t *testing.T) {

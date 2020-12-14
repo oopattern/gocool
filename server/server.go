@@ -24,8 +24,8 @@ package server
 // ref: https://medium.com/swlh/rest-over-grpc-with-grpc-gateway-for-go-9584bfcbb835
 // ref: https://jergoo.gitbooks.io/go-grpc-practice-guide/content/chapter3/gateway.html
 // ref: https://github.com/jergoo/go-grpc-tutorial/tree/master/src/proto/google/api
+// ref: https://my.oschina.net/wenzhenxi/blog/3023874
 import (
-	"fmt"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
@@ -33,7 +33,9 @@ import (
 	"google.golang.org/grpc"
 	"log"
 	"net"
+	"fmt"
 	"net/http"
+
 	// jaeger "github.com/uber/jaeger-client-go"
 	// opentracing "github.com/opentracing/opentracing-go"
 )
@@ -50,7 +52,6 @@ type GrpcServer interface {
 
 type grpcServer struct {
 	server *grpc.Server
-	http *http.Server
 	listener net.Listener
 }
 
@@ -74,8 +75,6 @@ func (s *grpcServer) RegisterService(reg func(*grpc.Server)) {
 
 func (s *grpcServer) Run() {
 	log.Fatal(s.server.Serve(s.listener))
-	// support REST gateway
-	// log.Fatal(s.http.Serve(s.listener))
 }
 
 func NewServer(endpoint string) GrpcServer {
@@ -99,17 +98,18 @@ func NewServer(endpoint string) GrpcServer {
 	}()
 
 	// Create REST gateway
-	h := RouteHttp(endpoint, s)
+	if err := RouteHttp(":8006", endpoint, s); err != nil {
+		log.Fatalf("failed to route gateway: %+v", err)
+	}
 
 	// Create a TCP  server
 	l, err := net.Listen("tcp", endpoint)
 	if err != nil {
-		log.Fatalf("failed to listen: +%v", err)
+		log.Fatalf("failed to listen: %+v", err)
 	}
 
 	server := &grpcServer{
 		server: s,
-		http: h,
 		listener: l,
 	}
 	return server
