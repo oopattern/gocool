@@ -25,28 +25,33 @@ package server
 // ref: https://jergoo.gitbooks.io/go-grpc-practice-guide/content/chapter3/gateway.html
 // ref: https://github.com/jergoo/go-grpc-tutorial/tree/master/src/proto/google/api
 // ref: https://my.oschina.net/wenzhenxi/blog/3023874
+// ref: https://github.com/micro/micro
+// ref: https://github.com/grpc/grpc-go/issues/3762
+// ref: https://cloud.tencent.com/developer/article/1427223
 import (
+	"fmt"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"google.golang.org/grpc"
 	"log"
 	"net"
-	"fmt"
 	"net/http"
-
 	// jaeger "github.com/uber/jaeger-client-go"
 	// opentracing "github.com/opentracing/opentracing-go"
 )
 
 var (
 	MetricsHttpPort = 9095
+	GatewayPort = 8006
+	GatewayMux = runtime.NewServeMux()
 )
 
 type GrpcServer interface {
 	Run()
-	RegisterService(reg func(*grpc.Server))
+	RegisterService(reg func(endpoint string, server *grpc.Server))
 	GetListener() net.Listener
 }
 
@@ -59,11 +64,11 @@ func (s *grpcServer) GetListener() net.Listener {
 	return s.listener
 }
 
-func (s *grpcServer) RegisterService(reg func(*grpc.Server)) {
-	// register to gRpc
-	reg(s.server)
-	// register to consul
+func (s *grpcServer) RegisterService(reg func(endpoint string, server *grpc.Server)) {
 	endpoint := s.listener.Addr().String()
+	// register to gRpc
+	reg(endpoint, s.server)
+	// register to consul
 	for name, info := range s.server.GetServiceInfo() {
 		if err := RegisterConsul(name, endpoint); err != nil {
 			log.Fatalf("Failed to register service[%s]", name)
@@ -74,6 +79,9 @@ func (s *grpcServer) RegisterService(reg func(*grpc.Server)) {
 }
 
 func (s *grpcServer) Run() {
+	// run gRpc gateway
+	StartGateway(fmt.Sprintf(":%d", GatewayPort), s.server)
+	// run gRpc server
 	log.Fatal(s.server.Serve(s.listener))
 }
 
@@ -96,11 +104,6 @@ func NewServer(endpoint string) GrpcServer {
 			log.Fatal("Failed to start a http server")
 		}
 	}()
-
-	// Create REST gateway
-	if err := RouteHttp(":8006", endpoint, s); err != nil {
-		log.Fatalf("failed to route gateway: %+v", err)
-	}
 
 	// Create a TCP  server
 	l, err := net.Listen("tcp", endpoint)

@@ -1,6 +1,7 @@
 package server
 
 import (
+	"log"
 	"context"
 	"github.com/oopattern/gocool/proto"
 	"google.golang.org/grpc"
@@ -12,8 +13,15 @@ type RouteServer struct {
 	proto.UnimplementedObserveServer
 }
 
-func (r *RouteServer)RegisterServer(grpcServer *grpc.Server) {
+func (r *RouteServer)RegisterServer(endpoint string, grpcServer *grpc.Server) {
+	// register gRpc server
 	proto.RegisterObserveServer(grpcServer, r)
+	// register gRpc gateway
+	ctx := context.Background()
+	opts := []grpc.DialOption{grpc.WithInsecure()}
+	if err := proto.RegisterObserveHandlerFromEndpoint(ctx, GatewayMux, endpoint, opts); err != nil {
+		log.Fatalf("register gateway err")
+	}
 }
 
 func (r *RouteServer) SayRoute(ctx context.Context, req *proto.RouteReq) (*proto.RouteResp, error) {

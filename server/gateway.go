@@ -1,14 +1,11 @@
 package server
 
 import (
-	"context"
 	"fmt"
 	"log"
-	"strings"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"github.com/oopattern/gocool/proto"
 	"google.golang.org/grpc"
 	"net/http"
+	"strings"
 )
 
 func grpcHandlerFunc(s *grpc.Server, h http.Handler) http.Handler {
@@ -18,30 +15,23 @@ func grpcHandlerFunc(s *grpc.Server, h http.Handler) http.Handler {
 			ZapLogger.Debug("zzzzz?")
 			s.ServeHTTP(w, r)
 		} else {
-			ZapLogger.Debug("wwww?")
+			ZapLogger.Debug("wwwww?")
 			h.ServeHTTP(w, r)
 		}
 	})
 }
 
 // support REST gateway
-func RouteHttp(gwAddr string, endpoint string, s *grpc.Server) error {
-	log.Printf("addr[%s] endpoint[%s] route to gateway", gwAddr, endpoint)
-	gwMux := runtime.NewServeMux()
-	opts := []grpc.DialOption{grpc.WithInsecure()}
-	if err := proto.RegisterObserveHandlerFromEndpoint(context.Background(), gwMux, endpoint, opts); err != nil {
-		ZapLogger.Error("register gateway err")
-		return err
-	}
+func StartGateway(gwAddr string, s *grpc.Server) {
 	mux := http.NewServeMux()
-	mux.Handle("/", gwMux)
+	mux.Handle("/", GatewayMux)
 	h := &http.Server{
 		Addr:		gwAddr,
 		Handler:	grpcHandlerFunc(s, mux),
 	}
-
-	go h.ListenAndServe()
-
-	ZapLogger.Info("register to gateway successfully")
-	return nil
+	go func() {
+		if err := h.ListenAndServe(); err != nil {
+			log.Fatalf("failed to lister http")
+		}
+	}()
 }
