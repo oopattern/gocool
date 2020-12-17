@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func grpcHandlerFunc(s *grpc.Server, h http.Handler) http.Handler {
+func gRpcHandlerFunc(s *grpc.Server, h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ZapLogger.Info(fmt.Sprintf("coming request[%+v]", *r))
 		if r.ProtoMajor == 2 && strings.Contains(r.Header.Get("Content-Type"), "application/grpc") {
@@ -27,7 +27,7 @@ func StartGateway(gwAddr string, s *grpc.Server) {
 	mux.Handle("/", GatewayMux)
 	h := &http.Server{
 		Addr:		gwAddr,
-		Handler:	grpcHandlerFunc(s, mux),
+		Handler:	gRpcHandlerFunc(s, mux),
 	}
 	go func() {
 		if err := h.ListenAndServe(); err != nil {
