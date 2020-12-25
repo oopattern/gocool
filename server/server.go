@@ -1,33 +1,5 @@
 package server
 
-// ref: https://github.com/apssouza22/grpc-production-go/blob/master/server/server.go
-// ref: https://colobu.com/2017/04/17/dive-into-gRPC-interceptor/
-// ref: https://www.liwenzhou.com/posts/Go/zap/
-// ref: https://prometheus.io/
-// ref: https://programmaticponderings.com/tag/prometheus/
-// ref: https://programmaticponderings.com/tag/jaeger/
-// ref: https://medium.com/htc-research-engineering-blog/build-a-monitoring-dashboard-by-prometheus-grafana-741a7d949ec2
-// ref: https://jishuin.proginn.com/p/763bfbd310b3
-// ref: https://medium.com/opentracing/tracing-http-request-latency-in-go-with-opentracing-7cc1282a100a
-// ref: https://www.selinux.tech/golang/grpc/grpc-tracing
-// ref: https://github.com/bigbully/Dapper-translation
-// ref: https://juejin.cn/post/6871928187123826702
-// ref: https://blog.csdn.net/zhounixing/article/details/105815910
-// ref: https://skyapm.github.io/document-cn-translation-of-skywalking/zh/8.0.0/
-// ref: https://learn.hashicorp.com/tutorials/consul/get-started-service-discovery
-// ref: http://blog.didispace.com/consul-service-discovery-exp/
-// ref: https://juejin.cn/post/6844903794380111886
-// ref: https://github.com/generals-space/gokit
-// ref: https://stackoverflow.com/questions/30684262/different-ports-used-by-consul
-// ref: https://www.consul.io/docs/install/ports
-// ref: https://www.cnblogs.com/FireworksEasyCool/p/12782137.html
-// ref: https://medium.com/swlh/rest-over-grpc-with-grpc-gateway-for-go-9584bfcbb835
-// ref: https://jergoo.gitbooks.io/go-grpc-practice-guide/content/chapter3/gateway.html
-// ref: https://github.com/jergoo/go-grpc-tutorial/tree/master/src/proto/google/api
-// ref: https://my.oschina.net/wenzhenxi/blog/3023874
-// ref: https://github.com/micro/micro
-// ref: https://github.com/grpc/grpc-go/issues/3762
-// ref: https://cloud.tencent.com/developer/article/1427223
 import (
 	"fmt"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
