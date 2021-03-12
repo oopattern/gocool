@@ -39,20 +39,21 @@ func (s *grpcServer) RegisterService(reg func(endpoint string, server *grpc.Serv
 	endpoint := s.listener.Addr().String()
 	// register to gRpc
 	reg(endpoint, s.server)
-	// register to consul
-	for name, info := range s.server.GetServiceInfo() {
-		if err := RegisterConsul(name, endpoint); err != nil {
-			log.Fatal("Failed to register service[%s]", name)
-		}
-		log.Info("register service_name[%s], info[%+v]", name, info)
-	}
 }
 
 func (s *grpcServer) Run() {
+	// 通过consul注册服务发现
+	if err := s.registerConsul(); err != nil {
+		log.Fatal("server register to consul error")
+	}
+
 	go func() {
 		c := make(chan os.Signal)
 		signal.Notify(c, syscall.SIGINT, syscall.SIGTERM, syscall.SIGALRM)
 		log.Error("catch signal[%s], process is ready to quit", <-c)
+
+		// 退出进程时注销consul的服务
+		s.deregisterConsul()
 		os.Exit(0)
 	}()
 
