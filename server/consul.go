@@ -2,9 +2,9 @@ package server
 
 import (
 	"errors"
+	"github.com/hashicorp/consul/agent/consul"
 	kitlog "github.com/go-kit/kit/log"
 	kitsd "github.com/go-kit/kit/sd/consul"
-	"github.com/hashicorp/consul/agent/consul"
 	"github.com/oopattern/gocool/config"
 	"github.com/oopattern/gocool/log"
 	"os"

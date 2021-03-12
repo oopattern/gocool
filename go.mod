@@ -9,7 +9,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
-	github.com/hashicorp/consul/api v1.8.1 // indirect
+	github.com/hashicorp/consul v1.8.1
 	github.com/prometheus/client_golang v1.9.0
 	github.com/shima-park/agollo v1.2.10
 	go.uber.org/zap v1.16.0
