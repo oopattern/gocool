@@ -11,6 +11,8 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"time"
+
 	// jaeger "github.com/uber/jaeger-client-go"
 	// opentracing "github.com/opentracing/opentracing-go"
 )
@@ -54,7 +56,11 @@ func (s *grpcServer) Run() {
 	// run gRpc gateway
 	StartGateway(fmt.Sprintf(":%d", GatewayPort), s.server)
 	// run gRpc server
-	log.Fatal(s.server.Serve(s.listener))
+	if err := s.server.Serve(s.listener); err != nil {
+		ZapLogger.Error("server catch signal to quit")
+	}
+	time.Sleep(2*time.Second)
+	ZapLogger.Error("xxx")
 }
 
 func NewServer(endpoint string) GrpcServer {
