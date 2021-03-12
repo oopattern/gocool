@@ -11,7 +11,9 @@ import (
 	"google.golang.org/grpc"
 	"net"
 	"net/http"
-	"time"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 var (
@@ -47,14 +49,19 @@ func (s *grpcServer) RegisterService(reg func(endpoint string, server *grpc.Serv
 }
 
 func (s *grpcServer) Run() {
+	go func() {
+		c := make(chan os.Signal)
+		signal.Notify(c, syscall.SIGINT, syscall.SIGTERM, syscall.SIGALRM)
+		log.Error("catch signal[%s], process is ready to quit", <-c)
+		os.Exit(0)
+	}()
+
 	// run gRpc gateway
 	StartGateway(config.GatewayEndPoint, s.server)
 	// run gRpc server
 	if err := s.server.Serve(s.listener); err != nil {
 		log.Error("server catch signal to quit")
 	}
-	time.Sleep(2*time.Second)
-	log.Error("xxx")
 }
 
 func NewServer(endpoint string) GrpcServer {

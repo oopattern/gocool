@@ -36,11 +36,11 @@ func init() {
 
 func main() {
 	/*
-	errs := make(chan error)
 	go func() {
 		c := make(chan os.Signal)
 		signal.Notify(c, syscall.SIGINT, syscall.SIGTERM, syscall.SIGALRM)
-		errs <- fmt.Errorf("%s", <-c)
+		log.Error("catch signal[%s], process is ready to quit", <-c)
+		os.Exit(0)
 	}()
 	*/
 	s := server.NewServer(endpoint)

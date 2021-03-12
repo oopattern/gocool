@@ -1,18 +1,31 @@
 package server
 
 import (
+	"errors"
+	kitlog "github.com/go-kit/kit/log"
+	kitsd "github.com/go-kit/kit/sd/consul"
+	"github.com/hashicorp/consul/agent/consul"
+	"github.com/oopattern/gocool/config"
+	"github.com/oopattern/gocool/log"
 	"os"
 	"strconv"
 	"strings"
-	"time"
-	kitlog "github.com/go-kit/kit/log"
-	kitsd "github.com/go-kit/kit/sd/consul"
-	consul "github.com/hashicorp/consul/api"
-	"github.com/oopattern/gocool/log"
-	"github.com/oopattern/gocool/config"
 )
 
 // # nohup consul agent -dev -client=0.0.0.0 &
+
+var (
+	consulRegistrar *kitsd.Registrar
+)
+
+func DeregisterConsul(service string) error {
+	if consulRegistrar == nil {
+		return errors.New("consul registrar is nil error")
+	}
+	consulRegistrar.Deregister()
+	log.Info("service[%s] deregister to consul successfully", service)
+	return nil
+}
 
 func RegisterConsul(service string, endpoint string) error {
 	addr := strings.Split(endpoint, ":")
@@ -34,14 +47,9 @@ func RegisterConsul(service string, endpoint string) error {
 		Address:           addr[0],
 		EnableTagOverride: false,
 	}
-	registrar := kitsd.NewRegistrar(kitClient, r, kitlog.With(logger, "component", "registrar"))
-	registrar.Register()
+	consulRegistrar = kitsd.NewRegistrar(kitClient, r, kitlog.With(logger, "component", "registrar"))
+	consulRegistrar.Register()
+
 	log.Info("service[%s] register to consul successfully", service)
-
-	time.Sleep(3*time.Second)
-
-	registrar.Deregister()
-	log.Info("service[%s] deregister to consul successfully", service)
-
 	return nil
 }
