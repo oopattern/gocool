@@ -1,18 +1,17 @@
 package server
 
 import (
-	"fmt"
-	"net"
-	"time"
-	"net/http"
-	"google.golang.org/grpc"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
-	"github.com/oopattern/gocool/log"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/oopattern/gocool/config"
+	"github.com/oopattern/gocool/log"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"google.golang.org/grpc"
+	"net"
+	"net/http"
+	"time"
 )
 
 var (
@@ -45,7 +44,6 @@ func (s *grpcServer) RegisterService(reg func(endpoint string, server *grpc.Serv
 		}
 		log.Info("register service_name[%s], info[%+v]", name, info)
 	}
-	log.Info(fmt.Sprintf("listen endpoint[%s]", endpoint))
 }
 
 func (s *grpcServer) Run() {

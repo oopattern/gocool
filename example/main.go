@@ -1,9 +1,11 @@
 package main
 
 import (
+	/*
 	"os"
 	"os/signal"
 	"syscall"
+	*/
 	"fmt"
 	"github.com/shima-park/agollo"
 	"github.com/oopattern/gocool/server"
@@ -33,13 +35,14 @@ func init() {
 }
 
 func main() {
+	/*
 	errs := make(chan error)
 	go func() {
 		c := make(chan os.Signal)
 		signal.Notify(c, syscall.SIGINT, syscall.SIGTERM, syscall.SIGALRM)
 		errs <- fmt.Errorf("%s", <-c)
 	}()
-
+	*/
 	s := server.NewServer(endpoint)
 	s.RegisterService(route.RegisterServer)
 	s.Run()
