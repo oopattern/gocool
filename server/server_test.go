@@ -2,9 +2,12 @@ package server
 
 import (
 	"fmt"
-	"log"
-	"testing"
 	"github.com/shima-park/agollo"
+	"log"
+	"os"
+	"os/signal"
+	"syscall"
+	"testing"
 )
 
 // 阿波罗配置中心: http://localhost:8070/
@@ -30,6 +33,13 @@ func init() {
 }
 
 func TestBuildGrpcServer(t *testing.T) {
+	errs := make(chan error)
+	go func() {
+		c := make(chan os.Signal)
+		signal.Notify(c, syscall.SIGINT, syscall.SIGTERM, syscall.SIGALRM)
+		errs <- fmt.Errorf("%s", <-c)
+	}()
+
 	ZapLogger.Info(fmt.Sprintf("trace port[%d]", tracePort))
 	s := NewServer(endpoint)
 	s.RegisterService(route.RegisterServer)

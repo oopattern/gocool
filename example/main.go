@@ -1,57 +1,48 @@
 package main
 
 import (
-	"context"
-	"errors"
+	"os"
+	"os/signal"
+	"syscall"
 	"fmt"
-	"time"
+	"log"
+	"github.com/shima-park/agollo"
+	"github.com/oopattern/gocool/server"
+	"github.com/oopattern/gocool/log"
 )
 
-var errStop = errors.New("just quit...")
+// 阿波罗配置中心: http://localhost:8070/
+// 用户名: apollo
+// 密码: admin
 
-func chanTest() {
-	var (
-		errc = make(chan error, 1)
-		resc = make(chan int, 1)
-		interruptc = make(chan struct{}, 1)
-	)
+// consul UI页面
+// http://localhost:8500/ui
 
-	go func() {
-		errc <- errStop
-		fmt.Printf("1. errc: %d\n", len(errc))
-		time.Sleep(2*time.Second)
-	}()
+var (
+	route = server.RouteServer{}
+	endpoint = ""
+)
 
-	// time.Sleep(1*time.Second)
-
-	select {
-	case err := <-errc:
-		time.Sleep(1*time.Second)
-		fmt.Printf("x catch err[%v]\n", err.Error())
-	case res := <-resc:
-		fmt.Printf("x catch resc signal[%v]\n", res)
-	case c := <-interruptc:
-		fmt.Printf("x catch interrupt signal[%v]\n", c)
-		//default:
-		//	time.Sleep(5*time.Second)
-		//	fmt.Printf("x just do nothing...%d\n", len(errc))
+func init() {
+	a, err := agollo.New("localhost:8080", "gongyi", agollo.AutoFetchOnCacheMiss())
+	if err != nil {
+		log.Fatalf("agollo config init failed: %+v", err)
 	}
-}
-
-func contextTest() {
-	c1 := context.Background()
-	c2 := context.Background()
-	c3 := context.Background()
-	c4 := context.TODO()
-	c5 := context.TODO()
-	fmt.Printf("%p\n", c1)
-	fmt.Printf("%p\n", c2)
-	fmt.Printf("%p\n", c3)
-	fmt.Printf("%p\n", c4)
-	fmt.Printf("%p\n", c5)
+	port := a.Get("grpc_port", agollo.WithDefault("0"))
+	endpoint = fmt.Sprintf("localhost:%s", port)
+	log.Info(fmt.Sprintf("grpc listen endpoint[%s]", endpoint))
 }
 
 func main() {
-	contextTest()
-}
+	errs := make(chan error)
+	go func() {
+		c := make(chan os.Signal)
+		signal.Notify(c, syscall.SIGINT, syscall.SIGTERM, syscall.SIGALRM)
+		errs <- fmt.Errorf("%s", <-c)
+	}()
 
+	ZapLogger.Info(fmt.Sprintf("trace port[%d]", tracePort))
+	s := NewServer(endpoint)
+	s.RegisterService(route.RegisterServer)
+	s.Run()
+}
