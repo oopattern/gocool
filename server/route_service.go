@@ -1,12 +1,12 @@
 package server
 
 import (
-	"log"
+	"strings"
 	"context"
-	"github.com/oopattern/gocool/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/peer"
-	"strings"
+	"github.com/oopattern/gocool/log"
+	"github.com/oopattern/gocool/proto"
 )
 
 type RouteServer struct {
@@ -20,7 +20,7 @@ func (r *RouteServer)RegisterServer(endpoint string, grpcServer *grpc.Server) {
 	ctx := context.Background()
 	opts := []grpc.DialOption{grpc.WithInsecure()}
 	if err := proto.RegisterObserveHandlerFromEndpoint(ctx, GatewayMux, endpoint, opts); err != nil {
-		log.Fatalf("register gateway err")
+		log.Fatal("register gateway err")
 	}
 }
 
@@ -38,7 +38,7 @@ func (r *RouteServer) SayRoute(ctx context.Context, req *proto.RouteReq) (*proto
 		}
 		port = addr[1]
 	}
-	ZapLogger.Debug("rpc call ok")
+	log.Debug("rpc call ok")
 	return &proto.RouteResp{
 		Ip:   ip,
 		Port: port,

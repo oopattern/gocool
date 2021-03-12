@@ -5,7 +5,6 @@ import (
 	"os/signal"
 	"syscall"
 	"fmt"
-	"log"
 	"github.com/shima-park/agollo"
 	"github.com/oopattern/gocool/server"
 	"github.com/oopattern/gocool/log"
@@ -26,11 +25,11 @@ var (
 func init() {
 	a, err := agollo.New("localhost:8080", "gongyi", agollo.AutoFetchOnCacheMiss())
 	if err != nil {
-		log.Fatalf("agollo config init failed: %+v", err)
+		log.Fatal("agollo config init failed: %+v", err)
 	}
 	port := a.Get("grpc_port", agollo.WithDefault("0"))
 	endpoint = fmt.Sprintf("localhost:%s", port)
-	log.Info(fmt.Sprintf("grpc listen endpoint[%s]", endpoint))
+	log.Info("grpc listen endpoint[%s]", endpoint)
 }
 
 func main() {
@@ -41,8 +40,7 @@ func main() {
 		errs <- fmt.Errorf("%s", <-c)
 	}()
 
-	ZapLogger.Info(fmt.Sprintf("trace port[%d]", tracePort))
-	s := NewServer(endpoint)
+	s := server.NewServer(endpoint)
 	s.RegisterService(route.RegisterServer)
 	s.Run()
 }

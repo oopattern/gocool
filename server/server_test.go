@@ -2,12 +2,13 @@ package server
 
 import (
 	"fmt"
-	"github.com/shima-park/agollo"
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
 	"testing"
+	"github.com/shima-park/agollo"
+	"github.com/oopattern/gocool/log"
+	"github.com/oopattern/gocool/config"
 )
 
 // 阿波罗配置中心: http://localhost:8070/
@@ -23,13 +24,13 @@ var (
 )
 
 func init() {
-	a, err := agollo.New("localhost:8080", "gongyi", agollo.AutoFetchOnCacheMiss())
+	a, err := agollo.New(config.AgolloEndPoint, "gongyi", agollo.AutoFetchOnCacheMiss())
 	if err != nil {
-		log.Fatalf("agollo config init failed: %+v", err)
+		log.Fatal("agollo config init failed: %+v", err)
 	}
 	port := a.Get("grpc_port", agollo.WithDefault("0"))
 	endpoint = fmt.Sprintf("localhost:%s", port)
-	ZapLogger.Info(fmt.Sprintf("grpc listen endpoint[%s]", endpoint))
+	log.Info("grpc listen endpoint[%s]", endpoint)
 }
 
 func TestBuildGrpcServer(t *testing.T) {
@@ -40,7 +41,6 @@ func TestBuildGrpcServer(t *testing.T) {
 		errs <- fmt.Errorf("%s", <-c)
 	}()
 
-	ZapLogger.Info(fmt.Sprintf("trace port[%d]", tracePort))
 	s := NewServer(endpoint)
 	s.RegisterService(route.RegisterServer)
 	s.Run()

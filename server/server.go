@@ -2,24 +2,20 @@ package server
 
 import (
 	"fmt"
+	"net"
+	"time"
+	"net/http"
+	"google.golang.org/grpc"
+	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"google.golang.org/grpc"
-	"log"
-	"net"
-	"net/http"
-	"time"
-
-	// jaeger "github.com/uber/jaeger-client-go"
-	// opentracing "github.com/opentracing/opentracing-go"
+	"github.com/oopattern/gocool/log"
+	"github.com/oopattern/gocool/config"
 )
 
 var (
-	MetricsHttpPort = 9095
-	GatewayPort = 8006
 	GatewayMux = runtime.NewServeMux()
 )
 
@@ -45,26 +41,26 @@ func (s *grpcServer) RegisterService(reg func(endpoint string, server *grpc.Serv
 	// register to consul
 	for name, info := range s.server.GetServiceInfo() {
 		if err := RegisterConsul(name, endpoint); err != nil {
-			log.Fatalf("Failed to register service[%s]", name)
+			log.Fatal("Failed to register service[%s]", name)
 		}
-		ZapLogger.Info(fmt.Sprintf("register service_name[%s], info[%+v]", name, info))
+		log.Info("register service_name[%s], info[%+v]", name, info)
 	}
-	ZapLogger.Info(fmt.Sprintf("listen endpoint[%s]", endpoint))
+	log.Info(fmt.Sprintf("listen endpoint[%s]", endpoint))
 }
 
 func (s *grpcServer) Run() {
 	// run gRpc gateway
-	StartGateway(fmt.Sprintf(":%d", GatewayPort), s.server)
+	StartGateway(config.GatewayEndPoint, s.server)
 	// run gRpc server
 	if err := s.server.Serve(s.listener); err != nil {
-		ZapLogger.Error("server catch signal to quit")
+		log.Error("server catch signal to quit")
 	}
 	time.Sleep(2*time.Second)
-	ZapLogger.Error("xxx")
+	log.Error("xxx")
 }
 
 func NewServer(endpoint string) GrpcServer {
-	logCfg := grpc_zap.UnaryServerInterceptor(ZapLogger)
+	logCfg := grpc_zap.UnaryServerInterceptor(log.ZapLogger)
 	prometheusCfg := grpc_prometheus.UnaryServerInterceptor
 	unaryOpt := grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(prometheusCfg, logCfg))
 
@@ -75,7 +71,7 @@ func NewServer(endpoint string) GrpcServer {
 	// Create a HTTP server for prometheus
 	grpc_prometheus.Register(s)
 	grpc_prometheus.EnableHandlingTimeHistogram()
-	prometheusServer := &http.Server{Addr: fmt.Sprintf("0.0.0.0:%d", MetricsHttpPort)}
+	prometheusServer := &http.Server{Addr: config.MetricsEndPoint}
 	http.Handle("/metrics", promhttp.Handler())
 	go func() {
 		if err := prometheusServer.ListenAndServe(); err != nil {
@@ -86,7 +82,7 @@ func NewServer(endpoint string) GrpcServer {
 	// Create a TCP  server
 	l, err := net.Listen("tcp", endpoint)
 	if err != nil {
-		log.Fatalf("failed to listen: %+v", err)
+		log.Fatal("failed to listen: %+v", err)
 	}
 
 	server := &grpcServer{
