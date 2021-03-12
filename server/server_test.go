@@ -7,6 +7,13 @@ import (
 	"github.com/shima-park/agollo"
 )
 
+// 阿波罗配置中心: http://localhost:8070/
+// 用户名: apollo
+// 密码: admin
+
+// consul UI页面
+// http://localhost:8500/ui
+
 var (
 	route = RouteServer{}
 	endpoint = ""

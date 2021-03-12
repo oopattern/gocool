@@ -24,6 +24,10 @@ func (r *RouteServer)RegisterServer(endpoint string, grpcServer *grpc.Server) {
 	}
 }
 
+func (r *RouteServer) Looks() error {
+	return nil
+}
+
 func (r *RouteServer) SayRoute(ctx context.Context, req *proto.RouteReq) (*proto.RouteResp, error) {
 	ip := "localhost"
 	port := "0"
