@@ -1,15 +1,15 @@
 package server
 
 import (
-	"errors"
-	"github.com/hashicorp/consul/agent/consul"
-	kitlog "github.com/go-kit/kit/log"
-	kitsd "github.com/go-kit/kit/sd/consul"
-	"github.com/oopattern/gocool/config"
-	"github.com/oopattern/gocool/log"
 	"os"
 	"strconv"
 	"strings"
+	"errors"
+	kitlog "github.com/go-kit/kit/log"
+	kitsd "github.com/go-kit/kit/sd/consul"
+	consul "github.com/hashicorp/consul/api"
+	"github.com/oopattern/gocool/log"
+	"github.com/oopattern/gocool/config"
 )
 
 // # nohup consul agent -dev -client=0.0.0.0 &
