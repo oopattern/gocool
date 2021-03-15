@@ -46,7 +46,7 @@ func (s *grpcServer) registerConsul() error {
 		logger := kitlog.NewLogfmtLogger(os.Stderr)
 
 		r := &consul.AgentServiceRegistration{
-			ID:                "Kit-Consul",
+			ID:                service,
 			Name:              service,
 			Tags:              []string{"alpha"},
 			Port:              port,

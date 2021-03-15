@@ -30,7 +30,7 @@ func NewObserveClient(cc grpc.ClientConnInterface) ObserveClient {
 
 func (c *observeClient) SayRoute(ctx context.Context, in *RouteReq, opts ...grpc.CallOption) (*RouteResp, error) {
 	out := new(RouteResp)
-	err := c.cc.Invoke(ctx, "/proto.Observe/SayRoute", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/observe.Observe/SayRoute", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +75,7 @@ func _Observe_SayRoute_Handler(srv interface{}, ctx context.Context, dec func(in
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.Observe/SayRoute",
+		FullMethod: "/observe.Observe/SayRoute",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ObserveServer).SayRoute(ctx, req.(*RouteReq))
@@ -84,7 +84,7 @@ func _Observe_SayRoute_Handler(srv interface{}, ctx context.Context, dec func(in
 }
 
 var _Observe_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "proto.Observe",
+	ServiceName: "observe.Observe",
 	HandlerType: (*ObserveServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
