@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	factory = service.FactoryServer{}
+	route = service.RouteServer{}
 	endpoint = ""
 )
 
@@ -26,6 +26,6 @@ func init() {
 
 func TestBuildGrpcServer(t *testing.T) {
 	s := NewServer(endpoint)
-	s.RegisterService(factory.RegisterServer)
+	s.RegisterService(route.RegisterServer)
 	s.Run()
 }

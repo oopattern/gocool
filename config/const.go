@@ -11,6 +11,12 @@ const (
 	SkyWalkingEndPoint = "127.0.0.1:11800"
 	MetricsEndPoint = "0.0.0.0:9095"
 	GatewayEndPoint = ":8006"
-	AgolloEndPoint = "localhost:8080"
-	ConsulEndPoint = "localhost:8500"
+	AgolloEndPoint = "127.0.0.1:8080"
+	ConsulEndPoint = "127.0.0.1:8500"
+)
+
+const (
+	DefaultConsulDataCenter = "dc1"
+	DefaultFactoryService = "factory.Factory" // 参考proto文件
+	DefaultObserveService = "observe.Observe" // 参考proto文件
 )

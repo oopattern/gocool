@@ -8,7 +8,7 @@ import (
 	"github.com/oopattern/gocool/log"
 )
 
-func init() {
+func InitSkywalking() {
 	r, err := reporter.NewGRPCReporter(config.SkyWalkingEndPoint)
 	if err != nil {
 		log.Fatal("failed new trace reporter err: %+v", err)
