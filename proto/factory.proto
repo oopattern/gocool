@@ -1,0 +1,24 @@
+syntax = "proto3";
+package factory;
+option go_package = ".;proto";
+// option go_package = "github.com/oopattern/gocool/proto";
+
+import "google/api/annotations.proto";
+
+// curl -X POST -H 'Content-Type: application/json' "http://localhost:8006/v1/factory" -d '{"name": "bar"}' -vvv
+service Factory {
+    rpc CreateScheduler(ConfigReq) returns (SchedulerResp) {
+        option(google.api.http) = {
+            post: "/v1/observe"
+            body: "*"
+        };
+    }
+}
+
+message ConfigReq {
+    string name = 1;
+}
+
+message SchedulerResp {
+    string id = 1;
+}

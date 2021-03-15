@@ -8,7 +8,7 @@
 // # go test -v -run="TestBuildGrpcServer"
 
 syntax = "proto3";
-package proto;
+package observe;
 option go_package = ".;proto";
 // option go_package = "github.com/oopattern/gocool/proto";
 

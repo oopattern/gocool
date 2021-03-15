@@ -2,13 +2,10 @@ package server
 
 import (
 	"fmt"
-	"os"
-	"os/signal"
-	"syscall"
-	"testing"
-	"github.com/shima-park/agollo"
-	"github.com/oopattern/gocool/log"
 	"github.com/oopattern/gocool/config"
+	"github.com/oopattern/gocool/log"
+	"github.com/shima-park/agollo"
+	"testing"
 )
 
 // 阿波罗配置中心: http://localhost:8070/
@@ -34,13 +31,6 @@ func init() {
 }
 
 func TestBuildGrpcServer(t *testing.T) {
-	errs := make(chan error)
-	go func() {
-		c := make(chan os.Signal)
-		signal.Notify(c, syscall.SIGINT, syscall.SIGTERM, syscall.SIGALRM)
-		errs <- fmt.Errorf("%s", <-c)
-	}()
-
 	s := NewServer(endpoint)
 	s.RegisterService(route.RegisterServer)
 	s.Run()
