@@ -4,8 +4,7 @@ package config
 // 用户名: apollo
 // 密码: admin
 
-// consul UI页面
-// http://localhost:8500/ui
+// consul UI页面: http://localhost:8500/ui
 
 // skywalking backend port
 const (

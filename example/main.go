@@ -19,7 +19,7 @@ func init() {
 	if err != nil {
 		log.Fatal("agollo config init failed: %+v", err)
 	}
-	port := a.Get("grpc_port", agollo.WithDefault("0"))
+	port := a.Get("route_port", agollo.WithDefault("0"))
 	endpoint = fmt.Sprintf("localhost:%s", port)
 	log.Info("grpc listen endpoint[%s]", endpoint)
 }

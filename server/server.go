@@ -4,20 +4,17 @@ import (
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_zap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
-	"github.com/oopattern/gocool/config"
+	grpc_runtime "github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/oopattern/gocool/log"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"google.golang.org/grpc"
 	"net"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 )
 
 var (
-	GatewayMux = runtime.NewServeMux()
+	GatewayMux = grpc_runtime.NewServeMux()
 )
 
 type GrpcServer interface {
@@ -58,7 +55,8 @@ func (s *grpcServer) Run() {
 	}()
 
 	// run gRpc gateway
-	StartGateway(config.GatewayEndPoint, s.server)
+	// StartGateway(config.GatewayEndPoint, s.server)
+
 	// run gRpc server
 	if err := s.server.Serve(s.listener); err != nil {
 		log.Error("server catch signal to quit")
@@ -75,6 +73,7 @@ func NewServer(endpoint string) GrpcServer {
 	s := grpc.NewServer(opts...)
 
 	// Create a HTTP server for prometheus
+	/*
 	grpc_prometheus.Register(s)
 	grpc_prometheus.EnableHandlingTimeHistogram()
 	prometheusServer := &http.Server{Addr: config.MetricsEndPoint}
@@ -83,7 +82,7 @@ func NewServer(endpoint string) GrpcServer {
 		if err := prometheusServer.ListenAndServe(); err != nil {
 			log.Fatal("Failed to start a http server")
 		}
-	}()
+	}()*/
 
 	// Create a TCP  server
 	l, err := net.Listen("tcp", endpoint)
