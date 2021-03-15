@@ -77,8 +77,9 @@ func (s *grpcServer) registerConsul() error {
 		kitClient := kitsd.NewClient(client)
 		logger := kitlog.NewLogfmtLogger(os.Stderr)
 
+		// 如果一个服务需要注册多个实例ip-port, 需要注意AgentServiceRegistration的ID参数不能相同
 		r := &consul.AgentServiceRegistration{
-			ID:                service,
+			ID:                service + "-" + endpoint,
 			Name:              service,
 			Tags:              []string{"alpha"},
 			Port:              port,
