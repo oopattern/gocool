@@ -20,7 +20,7 @@ var (
 )
 
 // 查找服务
-func LookupService(dc, name string) (*consul.ServiceEntry, error) {
+func LookupService(dc, name string) ([]*consul.ServiceEntry, error) {
 	client, err := consul.NewClient(&consul.Config{Address:config.ConsulEndPoint})
 	if err != nil {
 		log.Error("create consul client error")
@@ -45,7 +45,7 @@ func LookupService(dc, name string) (*consul.ServiceEntry, error) {
 		log.Info("show service agent[%+v]", *item.Service)
 	}
 
-	return entrys[0], nil
+	return entrys, nil
 }
 
 // 注销consul的服务发现
