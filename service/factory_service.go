@@ -1,46 +1,31 @@
-package server
+package service
 
 import (
-	"strings"
 	"context"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/peer"
 	"github.com/oopattern/gocool/log"
 	"github.com/oopattern/gocool/proto"
+	"github.com/oopattern/gocool/server"
 )
 
-type RouteServer struct {
-	proto.UnimplementedObserveServer
+type FactoryServer struct {
+	proto.UnimplementedFactoryServer
 }
 
-func (r *RouteServer)RegisterServer(endpoint string, grpcServer *grpc.Server) {
+func (r *FactoryServer)RegisterServer(endpoint string, grpcServer *grpc.Server) {
 	// register gRpc server
-	proto.RegisterObserveServer(grpcServer, r)
+	proto.RegisterFactoryServer(grpcServer, r)
 	// register gRpc gateway
 	ctx := context.Background()
 	opts := []grpc.DialOption{grpc.WithInsecure()}
-	if err := proto.RegisterObserveHandlerFromEndpoint(ctx, GatewayMux, endpoint, opts); err != nil {
+	if err := proto.RegisterFactoryHandlerFromEndpoint(ctx, server.GatewayMux, endpoint, opts); err != nil {
 		log.Fatal("register gateway err")
 	}
 }
 
-func (r *RouteServer) Looks() error {
-	return nil
-}
-
-func (r *RouteServer) SayRoute(ctx context.Context, req *proto.RouteReq) (*proto.RouteResp, error) {
-	ip := "localhost"
-	port := "0"
-	if pr, ok := peer.FromContext(ctx); ok {
-		addr := strings.Split(pr.Addr.String(), ":")
-		if "[" != addr[0] {
-			ip = addr[0]
-		}
-		port = addr[1]
-	}
+func (r *RouteServer) CreateScheduler(ctx context.Context, req *proto.ConfigReq) (*proto.SchedulerResp, error) {
 	log.Debug("rpc call ok")
-	return &proto.RouteResp{
-		Ip:   ip,
-		Port: port,
+	return &proto.SchedulerResp{
+		Id: "default-scheduler",
 	}, nil
 }

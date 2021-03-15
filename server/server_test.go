@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/oopattern/gocool/config"
 	"github.com/oopattern/gocool/log"
+	"github.com/oopattern/gocool/service"
 	"github.com/shima-park/agollo"
 	"testing"
 )
