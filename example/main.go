@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"github.com/shima-park/agollo"
 	"github.com/oopattern/gocool/server"
+	"github.com/oopattern/gocool/service"
 	"github.com/oopattern/gocool/log"
 	"github.com/oopattern/gocool/config"
 )
 
 var (
-	route = server.RouteServer{}
+	route = service.RouteServer{}
 	endpoint = ""
 )
 

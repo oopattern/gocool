@@ -17,7 +17,7 @@ import (
 // http://localhost:8500/ui
 
 var (
-	route = RouteServer{}
+	route = service.RouteServer{}
 	endpoint = ""
 )
 
