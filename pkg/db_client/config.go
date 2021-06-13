@@ -12,7 +12,7 @@ type DBConfig struct {
 
 // DBOptions include db option config
 type DBOptions struct {
-	MaxLiftTime int // minute
+	MaxLifeTime int // minute
 	MaxIdleConn int
 	MaxOpenConn int
 }

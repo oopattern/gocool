@@ -13,7 +13,7 @@ import (
 )
 
 var defaultDBOptions = &DBOptions{
-	MaxLiftTime: 15,
+	MaxLifeTime: 15,
 	MaxIdleConn: 1000,
 	MaxOpenConn: 1000,
 }
@@ -23,7 +23,17 @@ type MysqlClient struct {
 	Tx        bool
 }
 
-func NewMysqlClient(cfg DBConfig) (DBClient, error) {
+// Option configures a MysqlClient
+type Option func(*DBOptions)
+
+// WithMaxLifeTime sets MaxLifeTime for MysqlClient, the default MaxLifeTime is 15min
+func WithMaxLifeTime(min int) Option {
+	return func(o *DBOptions) {
+		o.MaxLifeTime = min
+	}
+}
+
+func NewMysqlClient(cfg DBConfig, opts ...Option) (DBClient, error) {
 	conn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		cfg.DBUser, cfg.DBPass, cfg.DBHost, cfg.DBPort, cfg.DBName)
 
@@ -33,10 +43,15 @@ func NewMysqlClient(cfg DBConfig) (DBClient, error) {
 		return nil, err
 	}
 
+	dbOptions := defaultDBOptions
+	for _, opt := range opts {
+		opt(dbOptions)
+	}
+
 	// 15分钟链接没有使用就断开
-	handler.SetConnMaxLifetime(time.Duration(defaultDBOptions.MaxLiftTime) * time.Minute)
-	handler.SetMaxIdleConns(defaultDBOptions.MaxIdleConn)
-	handler.SetMaxOpenConns(defaultDBOptions.MaxOpenConn)
+	handler.SetConnMaxLifetime(time.Duration(dbOptions.MaxLifeTime) * time.Minute)
+	handler.SetMaxIdleConns(dbOptions.MaxIdleConn)
+	handler.SetMaxOpenConns(dbOptions.MaxOpenConn)
 
 	return &MysqlClient{
 		DBHandler: handler,

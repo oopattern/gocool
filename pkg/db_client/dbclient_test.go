@@ -14,7 +14,7 @@ func TestBuildGrpcServer(t *testing.T) {
 		DBName: "test_db",
 	}
 
-	dbClient, err := NewMysqlClient(defaultCfg)
+	dbClient, err := NewMysqlClient(defaultCfg, WithMaxLifeTime(15))
 	if err != nil {
 		t.Error(err)
 	}
