@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestBuildGrpcServer(t *testing.T) {
+func TestMysqlClient(t *testing.T) {
 	defaultCfg := DBConfig{
 		DBType: "test",
 		DBHost: "127.0.0.1",
